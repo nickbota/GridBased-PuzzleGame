@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using GridSystem;
+using Visual.Effects;
 
 namespace Visual
 {
@@ -14,6 +15,9 @@ namespace Visual
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private Sprite _coveredSprite;
         [SerializeField] private Sprite _revealedSprite;
+
+        [Header("Effects")]
+        [SerializeField] private EffectController _effectController;
 
         private CellData _cellData;
 
@@ -62,7 +66,10 @@ namespace Visual
         private void OnMouseDown()
         {
             if (_cellData != null)
+            {
+                _effectController?.PlayEffect(EffectType.Click);
                 OnCellClicked?.Invoke(_cellData.X, _cellData.Y);
+            }
         }
     }
 }

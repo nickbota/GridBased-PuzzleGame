@@ -98,6 +98,8 @@ GameObject:
   - component: {fileID: 6146516731621678130}
   - component: {fileID: 2492016428456107089}
   - component: {fileID: 1537637652370842774}
+  - component: {fileID: 1149989595058307951}
+  - component: {fileID: 3340898580776227391}
   m_Layer: 0
   m_Name: GridCell
   m_TagString: Untagged
@@ -182,3 +184,36 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 470776677022777314}
   _coveredSprite: {fileID: 21300000, guid: 3d7eca592cdaa7f4bbcfa712bff6e2cf, type: 3}
   _revealedSprite: {fileID: 21300000, guid: 2cb965a99fb6fe64399ab9e179a2401f, type: 3}
+  _effectController: {fileID: 1149989595058307951}
+--- !u!114 &1149989595058307951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5346021595370618359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9699a949870b7da4a81cb9c76e214d74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _effectGroups:
+  - Type: 0
+    Effects:
+    - {fileID: 3340898580776227391}
+--- !u!114 &3340898580776227391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5346021595370618359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3af7227cfa356948ab3d26199f03064, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _intensity: 1.1
+  _duration: 0.3
+  _glowColor: {r: 1, g: 1, b: 1, a: 1}
+  _spriteRenderer: {fileID: 470776677022777314}

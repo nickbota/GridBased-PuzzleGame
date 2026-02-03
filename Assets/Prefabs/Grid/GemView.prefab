@@ -10,6 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5034167624267277946}
   - component: {fileID: 2003906116449513995}
+  - component: {fileID: 393364246408821617}
+  - component: {fileID: 8653163549475536095}
+  - component: {fileID: 5738725003023132685}
   m_Layer: 0
   m_Name: GemView
   m_TagString: Untagged
@@ -45,6 +48,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d43cee186d94d04ab96d0323ccf8ff5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spriteRenderer: {fileID: 7366260357089182309}
+  _effectController: {fileID: 393364246408821617}
+--- !u!114 &393364246408821617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2294409991789123815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9699a949870b7da4a81cb9c76e214d74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _effectGroups:
+  - Type: 0
+    Effects:
+    - {fileID: 8653163549475536095}
+  - Type: 1
+    Effects:
+    - {fileID: 5738725003023132685}
+--- !u!114 &8653163549475536095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2294409991789123815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3af7227cfa356948ab3d26199f03064, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _intensity: 1.5
+  _duration: 0.3
+  _glowColor: {r: 1, g: 1, b: 1, a: 1}
+  _spriteRenderer: {fileID: 7366260357089182309}
+--- !u!114 &5738725003023132685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2294409991789123815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32a258d8ceefd8a4c85194a676b739b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _duration: 0.5
+  _ease: 26
   _spriteRenderer: {fileID: 7366260357089182309}
 --- !u!1 &8992892734969813239
 GameObject:

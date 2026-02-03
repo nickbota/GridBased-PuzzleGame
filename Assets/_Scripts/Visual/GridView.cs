@@ -23,12 +23,24 @@ namespace Visual
         private GridData _gridData;
         private CellView[,] _cellViews;
         private List<GemView> _gemViews;
+        private Dictionary<int, GemView> _gemViewsById;
 
         public void Initialize(GridData data, List<GemData> placedGems)
         {
             _gridData = data;
             CreateGrid();
             CreateGemViews(placedGems);
+        }
+        private void OnDestroy()
+        {
+            if (_cellViews != null)
+            {
+                foreach (var cellView in _cellViews)
+                {
+                    if (cellView != null)
+                        cellView.OnCellClicked -= HandleCellClicked;
+                }
+            }
         }
 
         private void CreateGrid()
@@ -55,7 +67,6 @@ namespace Visual
             
             CenterGrid();
         }
-
         private void InstantiateCell(int x, int y)
         {
             Vector3 position = CalculateCellPosition(x, y);
@@ -77,27 +88,35 @@ namespace Visual
             
             _cellViews[x, y] = cellView;
         }
-        
         private void HandleCellClicked(int x, int y)
         {
+            NotifyGemClicked(x, y);
             OnCellClicked?.Invoke(x, y);
         }
-        
-        private void OnDestroy()
+        private void NotifyGemClicked(int x, int y)
         {
-            if (_cellViews != null)
+            CellData cellData = _gridData.GetCell(x, y);
+            
+            if (cellData == null || !cellData.HasGem)
             {
-                foreach (var cellView in _cellViews)
-                {
-                    if (cellView != null)
-                        cellView.OnCellClicked -= HandleCellClicked;
-                }
+                return;
             }
-        }
 
+            GemView gemView = FindGemViewById(cellData.GemId);
+            gemView?.OnGemClicked();
+        }
+        private GemView FindGemViewById(int gemId)
+        {
+            if (_gemViewsById != null && _gemViewsById.TryGetValue(gemId, out GemView gemView))
+            {
+                return gemView;
+            }
+            return null;
+        }
         private void CreateGemViews(List<GemData> placedGems)
         {
             _gemViews = new List<GemView>();
+            _gemViewsById = new Dictionary<int, GemView>();
 
             if (_gemPrefab == null)
             {
@@ -108,7 +127,6 @@ namespace Visual
             foreach (var gemData in placedGems)
                 CreateGemView(gemData);
         }
-
         private void CreateGemView(GemData gemData)
         {
             if (gemData.OccupiedCells.Count == 0)
@@ -133,6 +151,7 @@ namespace Visual
 
             gemView.Initialize(gemData);
             _gemViews.Add(gemView);
+            _gemViewsById[gemData.Id] = gemView;
         }
 
         private Vector3 CalculateGemPosition(GemData gemData)
@@ -153,7 +172,6 @@ namespace Visual
 
             return new Vector3(avgX, avgY, 0);
         }
-
         private Vector3 CalculateCellPosition(int x, int y)
         {
             float xPos = x * (_cellSize + _cellSpacing);
@@ -161,7 +179,6 @@ namespace Visual
             
             return new Vector3(xPos, yPos, 0);
         }
-
         private void CenterGrid()
         {
             float gridWidth = (_gridData.Width - 1) * (_cellSize + _cellSpacing);
