@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using GridSystem;
 
@@ -13,6 +14,7 @@ namespace Visual
         
         [Header("Prefab References")]
         [SerializeField] private GameObject cellPrefab;
+        [SerializeField] private GameObject gemPrefab;
         
         [Header("Grid Layout Settings")]
         [SerializeField] private float cellSize = 1.0f;
@@ -20,11 +22,13 @@ namespace Visual
         
         private GridData gridData;
         private CellView[,] cellViews;
+        private List<GemView> gemViews;
 
-        public void Initialize(GridData data)
+        public void Initialize(GridData data, List<GemData> placedGems)
         {
             gridData = data;
             CreateGrid();
+            CreateGemViews(placedGems);
         }
 
         private void CreateGrid()
@@ -81,13 +85,73 @@ namespace Visual
         
         private void OnDestroy()
         {
-            if (cellViews == null) return;
-            
-            foreach (var cellView in cellViews)
+            if (cellViews != null)
             {
-                if (cellView != null)
-                    cellView.OnCellClicked -= HandleCellClicked;
+                foreach (var cellView in cellViews)
+                {
+                    if (cellView != null)
+                        cellView.OnCellClicked -= HandleCellClicked;
+                }
             }
+        }
+
+        private void CreateGemViews(List<GemData> placedGems)
+        {
+            gemViews = new List<GemView>();
+
+            if (gemPrefab == null)
+            {
+                Debug.LogError("Gem prefab is not assigned.");
+                return;
+            }
+
+            foreach (var gemData in placedGems)
+                CreateGemView(gemData);
+        }
+
+        private void CreateGemView(GemData gemData)
+        {
+            if (gemData.OccupiedCells.Count == 0)
+            {
+                Debug.LogWarning($"Gem {gemData.Id} has no occupied cells.");
+                return;
+            }
+
+            Vector3 gemLocalPosition = CalculateGemPosition(gemData);
+            
+            GameObject gemObject = Instantiate(gemPrefab, transform);
+            gemObject.transform.localPosition = gemLocalPosition;
+            gemObject.name = $"Gem_{gemData.Id}_{gemData.Definition.GemName}";
+
+            GemView gemView = gemObject.GetComponent<GemView>();
+            if (gemView == null)
+            {
+                Debug.LogError("Gem prefab does not have a GemView component.");
+                Destroy(gemObject);
+                return;
+            }
+
+            gemView.Initialize(gemData);
+            gemViews.Add(gemView);
+        }
+
+        private Vector3 CalculateGemPosition(GemData gemData)
+        {
+            float totalX = 0f;
+            float totalY = 0f;
+            int cellCount = gemData.OccupiedCells.Count;
+
+            foreach (var cell in gemData.OccupiedCells)
+            {
+                Vector3 cellPosition = CalculateCellPosition(cell.X, cell.Y);
+                totalX += cellPosition.x;
+                totalY += cellPosition.y;
+            }
+
+            float avgX = totalX / cellCount;
+            float avgY = totalY / cellCount;
+
+            return new Vector3(avgX, avgY, 0);
         }
 
         private Vector3 CalculateCellPosition(int x, int y)
@@ -95,7 +159,7 @@ namespace Visual
             float xPos = x * (cellSize + cellSpacing);
             float yPos = y * (cellSize + cellSpacing);
             
-            return new Vector3(xPos, yPos, 0f);
+            return new Vector3(xPos, yPos, 0);
         }
 
         private void CenterGrid()
@@ -103,7 +167,7 @@ namespace Visual
             float gridWidth = (gridData.Width - 1) * (cellSize + cellSpacing);
             float gridHeight = (gridData.Height - 1) * (cellSize + cellSpacing);
             
-            Vector3 offset = new Vector3(-gridWidth / 2f, -gridHeight / 2f, 0f);
+            Vector3 offset = new Vector3(-gridWidth / 2f, -gridHeight / 2f, 0);
             transform.position += offset;
         }
     }

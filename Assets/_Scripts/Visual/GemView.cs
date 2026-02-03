@@ -5,24 +5,20 @@ namespace Visual
 {
     // Responsible for visual representation of a gem on the grid
     // Updates appearance when the gem is found
-
-    [RequireComponent(typeof(SpriteRenderer))]
     public class GemView : MonoBehaviour
     {
-        private SpriteRenderer spriteRenderer;
+        [SerializeField] private SpriteRenderer spriteRenderer;
         private GemData gemData;
         private bool isFound;
 
-        private void Awake()
-        {
-            spriteRenderer = GetComponent<SpriteRenderer>();
-            spriteRenderer.enabled = false;
-        }
         public void Initialize(GemData data)
         {
+            if (spriteRenderer == null)
+                Debug.LogError("Sprite Renderer not found!");
+
             gemData = data;
             gemData.OnGemFound += OnGemFound;
-            
+
             if (gemData.Definition != null && gemData.Definition.Sprite != null)
                 spriteRenderer.sprite = gemData.Definition.Sprite;
             
@@ -39,13 +35,7 @@ namespace Visual
             if (isFound) return;
             
             isFound = true;
-            ShowGemSprite();
             PlayFoundAnimation();
-        }
-
-        private void ShowGemSprite()
-        {
-            spriteRenderer.enabled = true;
         }
         private void PlayFoundAnimation()
         {

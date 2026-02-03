@@ -6,30 +6,24 @@ namespace Visual
 {
     // Responsible for visual representation of a single cell in the grid
     // Updates appearance based on the CellData state
-
-    [RequireComponent(typeof(SpriteRenderer))]
     public class CellView : MonoBehaviour
     {
         public event Action<int, int> OnCellClicked;
         
         [Header("Visual References")]
+        [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private Sprite coveredSprite;
         [SerializeField] private Sprite revealedSprite;
-        
-        private SpriteRenderer spriteRenderer;
-        private CellData cellData;
 
-        private void Awake()
-        {
-            spriteRenderer = GetComponent<SpriteRenderer>();
-        }
+        private CellData cellData;
 
         public void Initialize(CellData data)
         {
+            if (spriteRenderer == null)
+                Debug.LogError("Sprite Renderer not found!");
+
             if (cellData != null)
-            {
                 cellData.OnStateChanged -= OnCellStateChanged;
-            }
 
             cellData = data;
             cellData.OnStateChanged += OnCellStateChanged;
@@ -52,9 +46,17 @@ namespace Visual
         {
             if (cellData == null || spriteRenderer == null) return;
 
-            spriteRenderer.sprite = cellData.State == CellData.CellState.Covered 
-                ? coveredSprite 
-                : revealedSprite;
+            switch(cellData.State)
+            {
+                case CellData.CellState.Covered:
+                    spriteRenderer.sprite = coveredSprite;
+                    spriteRenderer.sortingOrder = 99;
+                    break;
+                case CellData.CellState.Revealed:
+                    spriteRenderer.sprite = revealedSprite;
+                    spriteRenderer.sortingOrder = 0;
+                    break;
+            }
         }
 
         private void OnMouseDown()

@@ -15,4 +15,4 @@ MonoBehaviour:
   gemName: Green
   width: 2
   height: 1
-  sprite: {fileID: 5501685540662858790, guid: dc84957ffbdc015499553bab4b8c607b, type: 3}
+  sprite: {fileID: 21300000, guid: dc84957ffbdc015499553bab4b8c607b, type: 3}

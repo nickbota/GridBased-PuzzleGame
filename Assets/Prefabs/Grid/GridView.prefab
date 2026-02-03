@@ -45,5 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellPrefab: {fileID: 5346021595370618359, guid: e1bb5d147e16363468a0fc6ba0680ef2, type: 3}
+  gemPrefab: {fileID: 2294409991789123815, guid: 8993263ea7810814f90a5e4de522936e, type: 3}
   cellSize: 1
   cellSpacing: 0

@@ -19,3 +19,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bb4c39831dbb43b40bcf0ee6f5f075ae, type: 2}
   - {fileID: 11400000, guid: e9442ee8e5c7a5a44ad36182298ad4b2, type: 2}
   - {fileID: 11400000, guid: 06b9eb50c9d173645b83de76dfb7afd1, type: 2}
+  lives: 10

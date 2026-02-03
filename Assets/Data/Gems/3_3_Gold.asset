@@ -15,4 +15,4 @@ MonoBehaviour:
   gemName: Gold
   width: 3
   height: 3
-  sprite: {fileID: 5673021278288933710, guid: 5674f6efc54b32c46b0168c58710e188, type: 3}
+  sprite: {fileID: 21300000, guid: 5674f6efc54b32c46b0168c58710e188, type: 3}

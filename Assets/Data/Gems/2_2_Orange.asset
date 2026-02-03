@@ -15,4 +15,4 @@ MonoBehaviour:
   gemName: Orange
   width: 2
   height: 2
-  sprite: {fileID: 7845028411284840281, guid: f90de3cf6497b624ea6990d8e1e58f11, type: 3}
+  sprite: {fileID: 21300000, guid: f90de3cf6497b624ea6990d8e1e58f11, type: 3}

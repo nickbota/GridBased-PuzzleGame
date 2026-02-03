@@ -11,7 +11,11 @@ public class LevelConfiguration : ScriptableObject
     [Header("Gem Configuration")]
     [SerializeField] private List<GemDefinition> gemDefinitions;
 
+    [Header("Game Rules")]
+    [SerializeField] private int lives = 3;
+
     public int GridWidth => gridWidth;
     public int GridHeight => gridHeight;
     public List<GemDefinition> GemDefinitions => gemDefinitions;
+    public int Lives => lives;
 }

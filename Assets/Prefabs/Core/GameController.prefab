@@ -44,5 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0db6e9cc720edd34dae25849f0a49d48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameConfiguration: {fileID: 11400000, guid: ab82ac3d3abd9e642b44ced9baf0a0cd, type: 2}
+  levelConfiguration: {fileID: 11400000, guid: ab82ac3d3abd9e642b44ced9baf0a0cd, type: 2}
   gridView: {fileID: 0}

@@ -15,4 +15,4 @@ MonoBehaviour:
   gemName: Pink
   width: 3
   height: 1
-  sprite: {fileID: 2914092377763158062, guid: ec37c372bfb38ff44a0ab5e6c1dcbc84, type: 3}
+  sprite: {fileID: 21300000, guid: ec37c372bfb38ff44a0ab5e6c1dcbc84, type: 3}
