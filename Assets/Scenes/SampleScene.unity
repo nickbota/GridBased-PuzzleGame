@@ -159,13 +159,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 57765479}
+  - component: {fileID: 57765480}
   m_Layer: 0
   m_Name: WinUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &57765479
 RectTransform:
   m_ObjectHideFlags: 0
@@ -188,6 +189,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &57765480
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 57765478}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &131719321
 GameObject:
   m_ObjectHideFlags: 0
@@ -641,7 +654,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1983737112}
         m_TargetAssemblyTypeName: UI.UIManager, Assembly-CSharp
-        m_MethodName: RestartGame
+        m_MethodName: RestartLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1056,7 +1069,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1983737112}
         m_TargetAssemblyTypeName: UI.UIManager, Assembly-CSharp
-        m_MethodName: RestartGame
+        m_MethodName: RestartLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1410,6 +1423,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameController: {fileID: 1996029352}
   _gridView: {fileID: 765929207}
+  _uiManager: {fileID: 1983737112}
 --- !u!1 &1745469585
 GameObject:
   m_ObjectHideFlags: 0
@@ -1423,7 +1437,7 @@ GameObject:
   - component: {fileID: 1745469587}
   - component: {fileID: 1745469589}
   m_Layer: 0
-  m_Name: Restart
+  m_Name: RestartButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1532,7 +1546,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1983737112}
         m_TargetAssemblyTypeName: UI.UIManager, Assembly-CSharp
-        m_MethodName: RestartGame
+        m_MethodName: RestartLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1551,13 +1565,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1777784305}
+  - component: {fileID: 1777784306}
   m_Layer: 0
   m_Name: LoseUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1777784305
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1580,6 +1595,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &1777784306
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1777784304}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1806259933
 GameObject:
   m_ObjectHideFlags: 0
@@ -1767,8 +1794,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gemsProgressText: {fileID: 2008227072}
   _livesText: {fileID: 131719323}
-  _winPanel: {fileID: 57765478}
-  _losePanel: {fileID: 1777784304}
+  _winScreen: {fileID: 57765480}
+  _loseScreen: {fileID: 1777784306}
 --- !u!114 &1996029352 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1827820337019882203, guid: 3ec465ddbcb025643b0f976f803f8b5d, type: 3}

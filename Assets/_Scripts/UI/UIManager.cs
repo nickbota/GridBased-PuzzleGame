@@ -1,79 +1,81 @@
+using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Zenject;
 using TMPro;
 using Core;
 
 namespace UI
 {
-    public class UIManager : MonoBehaviour
+    // Responsible for managing the game's UI elements, including HUD and end-game screens.
+    public class UIManager : MonoBehaviour, IInitializable, IDisposable
     {
-        [Header("UI Elements")]
+        [Header("HUD Elements")]
         [SerializeField] private TextMeshProUGUI _gemsProgressText;
         [SerializeField] private TextMeshProUGUI _livesText;
-        [SerializeField] private GameObject _winPanel;
-        [SerializeField] private GameObject _losePanel;
 
-        private GameController _gameController;
+        [Header("Screens")]
+        [SerializeField] private CanvasGroup _winScreen; 
+        [SerializeField] private CanvasGroup _loseScreen;
+
+        private IGameStatsProvider _gameStats;
+        private ILevelManager _levelManager;
+
         [Inject]
-        private void Init(GameController gameController)
+        public void Construct(IGameStatsProvider gameStats, ILevelManager levelManager)
         {
-            _gameController = gameController;
+            _gameStats = gameStats;
+            _levelManager = levelManager;
         }
-
-        private void OnEnable()
+        public void Initialize()
         {
-            if (_gameController == null)
+            BindEvents();
+            ResetUI();
+            
+            UpdateGemsProgress(_gameStats.CurrentGems, _gameStats.TotalGems);
+            UpdateLives(_gameStats.CurrentLives);
+        }
+        public void Dispose()
+        {
+            UnbindEvents();
+        }
+        private void BindEvents()
+        {
+            _gameStats.OnGemsProgressChanged += UpdateGemsProgress;
+            _gameStats.OnLivesChanged += UpdateLives;
+            _gameStats.OnGameStateChanged += HandleGameStateChanged;
+        }
+        private void UnbindEvents()
+        {
+            if (_gameStats != null)
             {
-                Debug.LogError("GameController reference is not assigned in UIManager.");
-                return;
-            }
-
-            _gameController.OnGemsProgressChanged += UpdateGemsProgress;
-            _gameController.OnLivesChanged += UpdateLives;
-            _gameController.OnGameStateChanged += HandleGameStateChanged;
-        }
-
-        private void OnDisable()
-        {
-            if (_gameController != null)
-            {
-                _gameController.OnGemsProgressChanged -= UpdateGemsProgress;
-                _gameController.OnLivesChanged -= UpdateLives;
-                _gameController.OnGameStateChanged -= HandleGameStateChanged;
+                _gameStats.OnGemsProgressChanged -= UpdateGemsProgress;
+                _gameStats.OnLivesChanged -= UpdateLives;
+                _gameStats.OnGameStateChanged -= HandleGameStateChanged;
             }
         }
 
-        private void Start()
+        public void RestartLevel()
         {
-            if (_winPanel != null)
-                _winPanel.SetActive(false);
-
-            if (_losePanel != null)
-                _losePanel.SetActive(false);
-
-            InitializeUI();
+            if(_levelManager != null)
+                _levelManager.RestartLevel();
         }
 
-        private void InitializeUI()
+        private void ResetUI()
         {
-            if (_gameController == null)
-                return;
-
-            UpdateGemsProgress(_gameController.GemsFoundCount, _gameController.TotalGemsCount);
-            UpdateLives(_gameController.CurrentLives);
+            ToggleScreen(_winScreen, false);
+            ToggleScreen(_loseScreen, false);
         }
 
-        private void UpdateGemsProgress(int foundCount, int totalCount)
+        private void UpdateGemsProgress(int found, int total)
         {
             if (_gemsProgressText != null)
-                _gemsProgressText.text = $"GEMS FOUND: {foundCount} / {totalCount}";
+                _gemsProgressText.SetText("GEMS FOUND: {0} / {1}", found, total);
         }
 
         private void UpdateLives(int lives)
         {
             if (_livesText != null)
-                _livesText.text = $"{lives}";
+                _livesText.SetText("{0}", lives);
         }
 
         private void HandleGameStateChanged(GameState newState)
@@ -81,41 +83,24 @@ namespace UI
             switch (newState)
             {
                 case GameState.Won:
-                    ShowWinPanel();
+                    ToggleScreen(_winScreen, true);
                     break;
                 case GameState.Lost:
-                    ShowLosePanel();
+                    ToggleScreen(_loseScreen, true);
                     break;
                 case GameState.Playing:
-                    HidePanels();
+                    ResetUI();
                     break;
             }
         }
 
-        private void ShowWinPanel()
+        private void ToggleScreen(CanvasGroup group, bool visible)
         {
-            if (_winPanel != null)
-                _winPanel.SetActive(true);
-        }
+            if (group == null) return;
 
-        private void ShowLosePanel()
-        {
-            if (_losePanel != null)
-                _losePanel.SetActive(true);
-        }
-
-        private void HidePanels()
-        {
-            if (_winPanel != null)
-                _winPanel.SetActive(false);
-
-            if (_losePanel != null)
-                _losePanel.SetActive(false);
-        }
-
-        public void RestartGame()
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            group.alpha = visible ? 1f : 0f;
+            group.interactable = visible;
+            group.blocksRaycasts = visible;
         }
     }
 }

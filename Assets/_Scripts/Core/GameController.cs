@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using GridSystem;
 using Visual;
 using Zenject;
 
 namespace Core
 {
-    public class GameController : MonoBehaviour
+    public class GameController : MonoBehaviour, IGameStatsProvider, ILevelManager
     {
         public event Action<GameState> OnGameStateChanged;
         public event Action<int, int> OnGemsProgressChanged;
@@ -30,6 +31,10 @@ namespace Core
         public int GemsFoundCount => _session?.GemsFound ?? 0;
         public GameState CurrentGameState => _currentGameState;
         public int CurrentLives => _session?.Lives ?? 0;
+        
+        int IGameStatsProvider.CurrentGems => GemsFoundCount;
+        int IGameStatsProvider.TotalGems => TotalGemsCount;
+        int IGameStatsProvider.CurrentLives => CurrentLives;
 
         [Inject]
         public void Construct(GridView gridView, IGridFactory gridFactory)
@@ -177,6 +182,11 @@ namespace Core
         {
             OnLivesChanged?.Invoke(_session.Lives);
             OnGemsProgressChanged?.Invoke(_session.GemsFound, _session.TotalGems);
+        }
+        
+        public void RestartLevel()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 }
