@@ -44,5 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0db6e9cc720edd34dae25849f0a49d48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelConfiguration: {fileID: 11400000, guid: ab82ac3d3abd9e642b44ced9baf0a0cd, type: 2}
+  levelConfigurations:
+  - {fileID: 11400000, guid: ab82ac3d3abd9e642b44ced9baf0a0cd, type: 2}
+  - {fileID: 11400000, guid: 864290034c41aba40ac03324b8584cc5, type: 2}
+  - {fileID: 11400000, guid: 594bf61d34e95e64b8aa5a7c55dd482c, type: 2}
+  - {fileID: 11400000, guid: 7cc30305878cc604896f5a343a8ffab4, type: 2}
   gridView: {fileID: 0}

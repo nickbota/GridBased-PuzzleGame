@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2f61a294c67f9c0409d69a29bb392288, type: 3}
-  m_Name: Level Configuration
+  m_Name: Level2
   m_EditorClassIdentifier: 
-  gridWidth: 6
-  gridHeight: 6
-  gemDefinitions:
+  _gridWidth: 5
+  _gridHeight: 5
+  _gemDefinitions:
   - {fileID: 11400000, guid: ff9c5a7ddc6ce4b40905f413c328fffb, type: 2}
-  - {fileID: 11400000, guid: bb4c39831dbb43b40bcf0ee6f5f075ae, type: 2}
   - {fileID: 11400000, guid: e9442ee8e5c7a5a44ad36182298ad4b2, type: 2}
-  - {fileID: 11400000, guid: 06b9eb50c9d173645b83de76dfb7afd1, type: 2}
-  lives: 10
+  - {fileID: 11400000, guid: bb4c39831dbb43b40bcf0ee6f5f075ae, type: 2}
+  - {fileID: 11400000, guid: bb4c39831dbb43b40bcf0ee6f5f075ae, type: 2}
+  _lives: 8

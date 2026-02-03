@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 957cbd4a06fbf8748ad9b6775dde76c7, type: 3}
   m_Name: 1_2_Green
   m_EditorClassIdentifier: 
-  gemName: Green
-  width: 2
-  height: 1
-  sprite: {fileID: 21300000, guid: dc84957ffbdc015499553bab4b8c607b, type: 3}
+  _gemName: Green
+  _width: 2
+  _height: 1
+  _sprite: {fileID: 21300000, guid: dc84957ffbdc015499553bab4b8c607b, type: 3}

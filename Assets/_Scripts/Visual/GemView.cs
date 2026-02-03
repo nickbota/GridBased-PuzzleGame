@@ -7,34 +7,34 @@ namespace Visual
     // Updates appearance when the gem is found
     public class GemView : MonoBehaviour
     {
-        [SerializeField] private SpriteRenderer spriteRenderer;
-        private GemData gemData;
-        private bool isFound;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
+        private GemData _gemData;
+        private bool _isFound;
 
         public void Initialize(GemData data)
         {
-            if (spriteRenderer == null)
+            if (_spriteRenderer == null)
                 Debug.LogError("Sprite Renderer not found!");
 
-            gemData = data;
-            gemData.OnGemFound += OnGemFound;
+            _gemData = data;
+            _gemData.OnGemFound += OnGemFound;
 
-            if (gemData.Definition != null && gemData.Definition.Sprite != null)
-                spriteRenderer.sprite = gemData.Definition.Sprite;
+            if (_gemData.Definition != null && _gemData.Definition.Sprite != null)
+                _spriteRenderer.sprite = _gemData.Definition.Sprite;
             
-            isFound = false;
+            _isFound = false;
         }
         private void OnDestroy()
         {
-            if (gemData != null)
-                gemData.OnGemFound -= OnGemFound;
+            if (_gemData != null)
+                _gemData.OnGemFound -= OnGemFound;
         }
 
         private void OnGemFound(GemData data)
         {
-            if (isFound) return;
+            if (_isFound) return;
             
-            isFound = true;
+            _isFound = true;
             PlayFoundAnimation();
         }
         private void PlayFoundAnimation()

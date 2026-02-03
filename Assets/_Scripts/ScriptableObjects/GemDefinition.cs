@@ -4,13 +4,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Gem", menuName = "GridBased_Puzzle/Gem Definition")]
 public class GemDefinition : ScriptableObject
 {
-    [SerializeField] private string gemName;
-    [SerializeField] private int width;
-    [SerializeField] private int height;
-    [SerializeField] private Sprite sprite;
+    [SerializeField] private string _gemName;
+    [SerializeField] private int _width;
+    [SerializeField] private int _height;
+    [SerializeField] private Sprite _sprite;
 
-    public string GemName => gemName;
-    public int Width => width;
-    public int Height => height;
-    public Sprite Sprite => sprite;
+    public string GemName => _gemName;
+    public int Width => _width;
+    public int Height => _height;
+    public Sprite Sprite => _sprite;
 }

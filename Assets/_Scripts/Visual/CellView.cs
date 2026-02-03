@@ -11,30 +11,30 @@ namespace Visual
         public event Action<int, int> OnCellClicked;
         
         [Header("Visual References")]
-        [SerializeField] private SpriteRenderer spriteRenderer;
-        [SerializeField] private Sprite coveredSprite;
-        [SerializeField] private Sprite revealedSprite;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private Sprite _coveredSprite;
+        [SerializeField] private Sprite _revealedSprite;
 
-        private CellData cellData;
+        private CellData _cellData;
 
         public void Initialize(CellData data)
         {
-            if (spriteRenderer == null)
+            if (_spriteRenderer == null)
                 Debug.LogError("Sprite Renderer not found!");
 
-            if (cellData != null)
-                cellData.OnStateChanged -= OnCellStateChanged;
+            if (_cellData != null)
+                _cellData.OnStateChanged -= OnCellStateChanged;
 
-            cellData = data;
-            cellData.OnStateChanged += OnCellStateChanged;
+            _cellData = data;
+            _cellData.OnStateChanged += OnCellStateChanged;
             
             UpdateVisuals();
         }
 
         private void OnDestroy()
         {
-            if (cellData != null)
-                cellData.OnStateChanged -= OnCellStateChanged;
+            if (_cellData != null)
+                _cellData.OnStateChanged -= OnCellStateChanged;
         }
 
         private void OnCellStateChanged(CellData data)
@@ -44,25 +44,25 @@ namespace Visual
 
         private void UpdateVisuals()
         {
-            if (cellData == null || spriteRenderer == null) return;
+            if (_cellData == null || _spriteRenderer == null) return;
 
-            switch(cellData.State)
+            switch(_cellData.State)
             {
                 case CellData.CellState.Covered:
-                    spriteRenderer.sprite = coveredSprite;
-                    spriteRenderer.sortingOrder = 99;
+                    _spriteRenderer.sprite = _coveredSprite;
+                    _spriteRenderer.sortingOrder = 99;
                     break;
                 case CellData.CellState.Revealed:
-                    spriteRenderer.sprite = revealedSprite;
-                    spriteRenderer.sortingOrder = 0;
+                    _spriteRenderer.sprite = _revealedSprite;
+                    _spriteRenderer.sortingOrder = 0;
                     break;
             }
         }
 
         private void OnMouseDown()
         {
-            if (cellData != null)
-                OnCellClicked?.Invoke(cellData.X, cellData.Y);
+            if (_cellData != null)
+                OnCellClicked?.Invoke(_cellData.X, _cellData.Y);
         }
     }
 }

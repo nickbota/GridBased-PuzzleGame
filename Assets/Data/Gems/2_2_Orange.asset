@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 957cbd4a06fbf8748ad9b6775dde76c7, type: 3}
   m_Name: 2_2_Orange
   m_EditorClassIdentifier: 
-  gemName: Orange
-  width: 2
-  height: 2
-  sprite: {fileID: 21300000, guid: f90de3cf6497b624ea6990d8e1e58f11, type: 3}
+  _gemName: Orange
+  _width: 2
+  _height: 2
+  _sprite: {fileID: 21300000, guid: f90de3cf6497b624ea6990d8e1e58f11, type: 3}

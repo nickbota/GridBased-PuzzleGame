@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Zenject;
 using TMPro;
 using Core;
 
@@ -8,68 +8,72 @@ namespace UI
 {
     public class UIManager : MonoBehaviour
     {
-        [Header("References")]
-        [SerializeField] private GameController gameController;
-
         [Header("UI Elements")]
-        [SerializeField] private TextMeshProUGUI gemsProgressText;
-        [SerializeField] private TextMeshProUGUI livesText;
-        [SerializeField] private GameObject winPanel;
-        [SerializeField] private GameObject losePanel;
+        [SerializeField] private TextMeshProUGUI _gemsProgressText;
+        [SerializeField] private TextMeshProUGUI _livesText;
+        [SerializeField] private GameObject _winPanel;
+        [SerializeField] private GameObject _losePanel;
+
+        private GameController _gameController;
+        [Inject]
+        private void Init(GameController gameController)
+        {
+            _gameController = gameController;
+        }
 
         private void OnEnable()
         {
-            if (gameController == null)
+            if (_gameController == null)
             {
                 Debug.LogError("GameController reference is not assigned in UIManager.");
                 return;
             }
 
-            gameController.OnGemsFoundChanged += UpdateGemsProgress;
-            gameController.OnLivesChanged += UpdateLives;
-            gameController.OnGameStateChanged += HandleGameStateChanged;
+            _gameController.OnGemsProgressChanged += UpdateGemsProgress;
+            _gameController.OnLivesChanged += UpdateLives;
+            _gameController.OnGameStateChanged += HandleGameStateChanged;
         }
 
         private void OnDisable()
         {
-            if (gameController != null)
+            if (_gameController != null)
             {
-                gameController.OnGemsFoundChanged -= UpdateGemsProgress;
-                gameController.OnLivesChanged -= UpdateLives;
-                gameController.OnGameStateChanged -= HandleGameStateChanged;
+                _gameController.OnGemsProgressChanged -= UpdateGemsProgress;
+                _gameController.OnLivesChanged -= UpdateLives;
+                _gameController.OnGameStateChanged -= HandleGameStateChanged;
             }
         }
 
         private void Start()
         {
-            if (winPanel != null)
-                winPanel.SetActive(false);
+            if (_winPanel != null)
+                _winPanel.SetActive(false);
 
-            if (losePanel != null)
-                losePanel.SetActive(false);
+            if (_losePanel != null)
+                _losePanel.SetActive(false);
 
             InitializeUI();
         }
 
         private void InitializeUI()
         {
-            if (gameController == null)
+            if (_gameController == null)
                 return;
 
-            UpdateGemsProgress(gameController.GemsFoundCount, gameController.TotalGemsCount);
-            UpdateLives(gameController.CurrentLives);
+            UpdateGemsProgress(_gameController.GemsFoundCount, _gameController.TotalGemsCount);
+            UpdateLives(_gameController.CurrentLives);
         }
 
         private void UpdateGemsProgress(int foundCount, int totalCount)
         {
-            if (gemsProgressText != null)
-                gemsProgressText.text = $"GEMS FOUND: {foundCount} / {totalCount}";
+            if (_gemsProgressText != null)
+                _gemsProgressText.text = $"GEMS FOUND: {foundCount} / {totalCount}";
         }
 
         private void UpdateLives(int lives)
         {
-            if (livesText != null)
-                livesText.text = $"{lives}";
+            if (_livesText != null)
+                _livesText.text = $"{lives}";
         }
 
         private void HandleGameStateChanged(GameState newState)
@@ -90,23 +94,23 @@ namespace UI
 
         private void ShowWinPanel()
         {
-            if (winPanel != null)
-                winPanel.SetActive(true);
+            if (_winPanel != null)
+                _winPanel.SetActive(true);
         }
 
         private void ShowLosePanel()
         {
-            if (losePanel != null)
-                losePanel.SetActive(true);
+            if (_losePanel != null)
+                _losePanel.SetActive(true);
         }
 
         private void HidePanels()
         {
-            if (winPanel != null)
-                winPanel.SetActive(false);
+            if (_winPanel != null)
+                _winPanel.SetActive(false);
 
-            if (losePanel != null)
-                losePanel.SetActive(false);
+            if (_losePanel != null)
+                _losePanel.SetActive(false);
         }
 
         public void RestartGame()

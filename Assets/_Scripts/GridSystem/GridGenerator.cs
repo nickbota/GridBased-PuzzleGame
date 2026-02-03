@@ -6,21 +6,21 @@ namespace GridSystem
     // Responsible for taking in grid data and placing gems randomly
     public class GridGenerator
     {
-        private readonly GridData gridData;
-        private readonly System.Random random;
-        private int nextGemId;
+        private readonly GridData _gridData;
+        private readonly System.Random _random;
+        private int _nextGemId;
 
         public GridGenerator(GridData gridData, int? seed = null)
         {
-            this.gridData = gridData;
-            this.random = seed.HasValue ? new System.Random(seed.Value) : new System.Random();
-            this.nextGemId = 0;
+            _gridData = gridData;
+            _random = seed.HasValue ? new System.Random(seed.Value) : new System.Random();
+            _nextGemId = 0;
         }
 
         public List<GemData> PlaceGemsRandomly(List<GemDefinition> gemDefinitions, int maxAttempts = 100)
         {
             List<GemData> placedGems = new List<GemData>();
-            bool[,] occupiedCells = new bool[gridData.Width, gridData.Height];
+            bool[,] occupiedCells = new bool[_gridData.Width, _gridData.Height];
 
             foreach (GemDefinition gemDef in gemDefinitions)
             {
@@ -29,8 +29,8 @@ namespace GridSystem
 
                 while (!placed && attempts < maxAttempts)
                 {
-                    int randomX = random.Next(0, gridData.Width);
-                    int randomY = random.Next(0, gridData.Height);
+                    int randomX = _random.Next(0, _gridData.Width);
+                    int randomY = _random.Next(0, _gridData.Height);
 
                     if (CanPlaceGem(randomX, randomY, gemDef, occupiedCells))
                     {
@@ -65,7 +65,7 @@ namespace GridSystem
             int endX = x + gemDef.Width;
             int endY = y + gemDef.Height;
 
-            return endX <= gridData.Width && endY <= gridData.Height;
+            return endX <= _gridData.Width && endY <= _gridData.Height;
         }
 
         private bool HasCollision(int x, int y, GemDefinition gemDef, bool[,] occupiedCells)
@@ -87,7 +87,7 @@ namespace GridSystem
 
         private GemData PlaceGem(int x, int y, GemDefinition gemDef, bool[,] occupiedCells)
         {
-            int gemId = nextGemId++;
+            int gemId = _nextGemId++;
             GemData gem = new GemData(gemId, gemDef);
 
             for (int offsetX = 0; offsetX < gemDef.Width; offsetX++)
@@ -97,7 +97,7 @@ namespace GridSystem
                     int cellX = x + offsetX;
                     int cellY = y + offsetY;
 
-                    CellData cell = gridData.GetCell(cellX, cellY);
+                    CellData cell = _gridData.GetCell(cellX, cellY);
                     cell.SetGem(gemId);
                     gem.AddCell(cell);
                     occupiedCells[cellX, cellY] = true;

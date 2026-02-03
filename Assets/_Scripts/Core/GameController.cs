@@ -3,140 +3,140 @@ using System.Collections.Generic;
 using UnityEngine;
 using GridSystem;
 using Visual;
+using Zenject;
 
 namespace Core
 {
-    // Responsible for managing the overall game state, initializing the grid, handling user interactions, and tracking game progress.
     public class GameController : MonoBehaviour
     {
         public event Action<GameState> OnGameStateChanged;
-        public event Action<int, int> OnGemsFoundChanged;
+        public event Action<int, int> OnGemsProgressChanged;
         public event Action<int> OnLivesChanged;
 
         [Header("Configuration")]
-        [SerializeField] private LevelConfiguration levelConfiguration;
+        [SerializeField] private LevelConfiguration[] levelConfigurations;
 
-        [Header("References")]
-        [SerializeField] private GridView gridView;
-
-        private GridData gridData;
-        private GridGenerator gridGenerator;
-        private List<GemData> placedGems;
+        private GridView _gridView;
+        private IGridFactory _gridFactory;
         
-        private GameState currentGameState;
-        private int gemsFoundCount;
-        private int currentLives;
+        private GridData _gridData;
+        private LevelSession _session;
+        private List<GemData> _placedGems;
+        private LevelConfiguration _selectedLevelConfiguration;
+        
+        private GameState _currentGameState;
 
-        public int TotalGemsCount => placedGems != null ? placedGems.Count : 0;
-        public int GemsFoundCount => gemsFoundCount;
-        public GameState CurrentGameState => currentGameState;
-        public int CurrentLives => currentLives;
+        public int TotalGemsCount => _placedGems != null ? _placedGems.Count : 0;
+        public int GemsFoundCount => _session?.GemsFound ?? 0;
+        public GameState CurrentGameState => _currentGameState;
+        public int CurrentLives => _session?.Lives ?? 0;
 
+        [Inject]
+        public void Construct(GridView gridView, IGridFactory gridFactory)
+        {
+            _gridView = gridView;
+            _gridFactory = gridFactory;
+        }
         private void Start()
         {
             InitializeGame();
         }
+        private void OnDestroy()
+        {
+            if (_gridData != null)
+                _gridData.OnCellRevealed -= HandleCellRevealed;
+
+            if (_gridView != null)
+                _gridView.OnCellClicked -= HandleCellClicked;
+
+            UnsubscribeFromGemEvents();
+        }
 
         private void InitializeGame()
         {
-            if (levelConfiguration == null)
+            //Select level configuration
+            if (levelConfigurations == null || levelConfigurations.Length == 0)
             {
-                Debug.LogError("GameConfiguration is not assigned in GameController.");
+                Debug.LogError("No level configurations are assigned in GameController.");
                 return;
             }
 
-            gemsFoundCount = 0;
-            currentLives = levelConfiguration.Lives;
-            SetGameState(GameState.Playing);
-            OnLivesChanged?.Invoke(currentLives);
-
-            gridData = new GridData(levelConfiguration.GridWidth, levelConfiguration.GridHeight);
-            gridData.OnCellRevealed += OnCellRevealed;
-
-            gridGenerator = new GridGenerator(gridData);
-
-            placedGems = gridGenerator.PlaceGemsRandomly(levelConfiguration.GemDefinitions);
+            _selectedLevelConfiguration = SelectRandomLevelConfiguration();
             
-            SubscribeToGemEvents();
-
-            if (gridView != null)
+            if (_selectedLevelConfiguration == null)
             {
-                gridView.Initialize(gridData, placedGems);
-                gridView.OnCellClicked += HandleCellClicked;
+                Debug.LogError("Selected level configuration is null.");
+                return;
+            }
+
+            //Create grid, place gems & create session
+            _gridData = _gridFactory.CreateGrid(_selectedLevelConfiguration.GridWidth, _selectedLevelConfiguration.GridHeight);
+            _placedGems = _gridFactory.PlaceGems(_gridData, _selectedLevelConfiguration.GemDefinitions);
+            _session = new LevelSession(_selectedLevelConfiguration.Lives, _placedGems.Count);
+
+            //Initialize gridView and listen to relevant events
+            if (_gridView != null)
+            {
+                _gridView.Initialize(_gridData, _placedGems);
+                _gridView.OnCellClicked += HandleCellClicked;
             }
             else
                 Debug.LogError("GridView reference is not assigned in GameController.");
 
-            Debug.Log($"Game initialized with {TotalGemsCount} gems on a {levelConfiguration.GridWidth}x{levelConfiguration.GridHeight} grid.");
+            _gridData.OnCellRevealed += HandleCellRevealed;
+            SubscribeToGemEvents();
+
+            //Start game and refresh UI
+            SetGameState(GameState.Playing);
+            RefreshUI();
+
+            Debug.Log($"Game initialized with {TotalGemsCount} gems on a {_selectedLevelConfiguration.GridWidth}x{_selectedLevelConfiguration.GridHeight} grid.");
+        }
+        
+        private LevelConfiguration SelectRandomLevelConfiguration()
+        {
+            int randomIndex = UnityEngine.Random.Range(0, levelConfigurations.Length);
+            LevelConfiguration selected = levelConfigurations[randomIndex];
+            Debug.Log($"Selected level configuration {randomIndex + 1} out of {levelConfigurations.Length}");
+            return selected;
         }
         
         private void HandleCellClicked(int x, int y)
         {
-            if (currentGameState != GameState.Playing)
+            if (_currentGameState != GameState.Playing)
             {
                 Debug.Log("Game is not in Playing state. Ignoring click.");
                 return;
             }
             
-            CellData cell = gridData.GetCell(x, y);
-            
-            if (cell == null)
-            {
-                Debug.LogWarning($"Invalid cell coordinates: ({x}, {y})");
-                return;
-            }
-            
-            if (cell.State == CellData.CellState.Revealed)
-            {
-                Debug.Log($"Cell at ({x}, {y}) is already revealed. Ignoring click.");
-                return;
-            }
-            
-            gridData.TryRevealCell(x, y);
-        }
-
-        private void OnDestroy()
-        {
-            if (gridData != null)
-                gridData.OnCellRevealed -= OnCellRevealed;
-                
-            if (gridView != null)
-                gridView.OnCellClicked -= HandleCellClicked;
-            
-            UnsubscribeFromGemEvents();
+            _gridData.TryRevealCell(x, y);
         }
 
         private void SubscribeToGemEvents()
         {
-            if (placedGems == null)
+            if (_placedGems == null)
                 return;
 
-            foreach (var gem in placedGems)
-                gem.OnGemFound += OnGemFound;
+            foreach (var gem in _placedGems)
+                gem.OnGemFound += HandleGemFound;
         }
-
         private void UnsubscribeFromGemEvents()
         {
-            if (placedGems == null)
+            if (_placedGems == null)
                 return;
 
-            foreach (var gem in placedGems)
-                gem.OnGemFound -= OnGemFound;
+            foreach (var gem in _placedGems)
+                gem.OnGemFound -= HandleGemFound;
         }
 
-        private void OnGemFound(GemData gem)
+        private void HandleGemFound(GemData gem)
         {
-            gemsFoundCount++;
-            OnGemsFoundChanged?.Invoke(gemsFoundCount, TotalGemsCount);
+            _session.IncrementGems();
+            OnGemsProgressChanged?.Invoke(_session.GemsFound, _session.TotalGems);
             
-            Debug.Log($"Gem found! Progress: {gemsFoundCount}/{TotalGemsCount}");
+            Debug.Log($"Gem found! Progress: {_session.GemsFound}/{_session.TotalGems}");
             
-            CheckWinCondition();
-        }
-
-        private void CheckWinCondition()
-        {
-            if (gemsFoundCount >= TotalGemsCount)
+            if (_session.GemsFound >= _session.TotalGems)
             {
                 SetGameState(GameState.Won);
                 Debug.Log("All gems found! You won!");
@@ -145,43 +145,38 @@ namespace Core
 
         private void SetGameState(GameState newState)
         {
-            if (currentGameState == newState)
+            if (_currentGameState == newState)
                 return;
 
-            currentGameState = newState;
-            OnGameStateChanged?.Invoke(currentGameState);
+            _currentGameState = newState;
+            OnGameStateChanged?.Invoke(_currentGameState);
             
-            Debug.Log($"Game state changed to: {currentGameState}");
+            Debug.Log($"Game state changed to: {_currentGameState}");
         }
 
-        private void OnCellRevealed(CellData cell)
+        private void HandleCellRevealed(CellData cell)
         {
             Debug.Log($"Cell revealed at ({cell.X}, {cell.Y})");
             
             if (!cell.HasGem)
-                DecreaseLives();
-        }
-
-        private void DecreaseLives()
-        {
-            if (currentGameState != GameState.Playing)
-                return;
-
-            currentLives--;
-            OnLivesChanged?.Invoke(currentLives);
-            
-            Debug.Log($"Life lost! Remaining lives: {currentLives}");
-            
-            CheckLoseCondition();
-        }
-
-        private void CheckLoseCondition()
-        {
-            if (currentLives <= 0)
             {
-                SetGameState(GameState.Lost);
-                Debug.Log("No lives left! You lost!");
+                _session.DecrementLife();
+                OnLivesChanged?.Invoke(_session.Lives);
+                
+                Debug.Log($"Life lost! Remaining lives: {_session.Lives}");
+                
+                if (_session.Lives <= 0)
+                {
+                    SetGameState(GameState.Lost);
+                    Debug.Log("No lives left! You lost!");
+                }
             }
+        }
+
+        private void RefreshUI()
+        {
+            OnLivesChanged?.Invoke(_session.Lives);
+            OnGemsProgressChanged?.Invoke(_session.GemsFound, _session.TotalGems);
         }
     }
 }

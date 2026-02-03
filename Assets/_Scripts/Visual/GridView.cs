@@ -13,43 +13,43 @@ namespace Visual
         public event Action<int, int> OnCellClicked;
         
         [Header("Prefab References")]
-        [SerializeField] private GameObject cellPrefab;
-        [SerializeField] private GameObject gemPrefab;
+        [SerializeField] private GameObject _cellPrefab;
+        [SerializeField] private GameObject _gemPrefab;
         
         [Header("Grid Layout Settings")]
-        [SerializeField] private float cellSize = 1.0f;
-        [SerializeField] private float cellSpacing = 0.1f;
+        [SerializeField] private float _cellSize = 1.0f;
+        [SerializeField] private float _cellSpacing = 0.1f;
         
-        private GridData gridData;
-        private CellView[,] cellViews;
-        private List<GemView> gemViews;
+        private GridData _gridData;
+        private CellView[,] _cellViews;
+        private List<GemView> _gemViews;
 
         public void Initialize(GridData data, List<GemData> placedGems)
         {
-            gridData = data;
+            _gridData = data;
             CreateGrid();
             CreateGemViews(placedGems);
         }
 
         private void CreateGrid()
         {
-            if (gridData == null)
+            if (_gridData == null)
             {
                 Debug.LogError("GridData is null. Cannot create grid.");
                 return;
             }
 
-            if (cellPrefab == null)
+            if (_cellPrefab == null)
             {
                 Debug.LogError("Cell prefab is not assigned.");
                 return;
             }
 
-            cellViews = new CellView[gridData.Width, gridData.Height];
+            _cellViews = new CellView[_gridData.Width, _gridData.Height];
             
-            for (int x = 0; x < gridData.Width; x++)
+            for (int x = 0; x < _gridData.Width; x++)
             {
-                for (int y = 0; y < gridData.Height; y++)
+                for (int y = 0; y < _gridData.Height; y++)
                     InstantiateCell(x, y);
             }
             
@@ -60,7 +60,7 @@ namespace Visual
         {
             Vector3 position = CalculateCellPosition(x, y);
             
-            GameObject cellObject = Instantiate(cellPrefab, position, Quaternion.identity, transform);
+            GameObject cellObject = Instantiate(_cellPrefab, position, Quaternion.identity, transform);
             cellObject.name = $"Cell_{x}_{y}";
             
             CellView cellView = cellObject.GetComponent<CellView>();
@@ -71,11 +71,11 @@ namespace Visual
                 return;
             }
             
-            CellData cellData = gridData.GetCell(x, y);
+            CellData cellData = _gridData.GetCell(x, y);
             cellView.Initialize(cellData);
             cellView.OnCellClicked += HandleCellClicked;
             
-            cellViews[x, y] = cellView;
+            _cellViews[x, y] = cellView;
         }
         
         private void HandleCellClicked(int x, int y)
@@ -85,9 +85,9 @@ namespace Visual
         
         private void OnDestroy()
         {
-            if (cellViews != null)
+            if (_cellViews != null)
             {
-                foreach (var cellView in cellViews)
+                foreach (var cellView in _cellViews)
                 {
                     if (cellView != null)
                         cellView.OnCellClicked -= HandleCellClicked;
@@ -97,9 +97,9 @@ namespace Visual
 
         private void CreateGemViews(List<GemData> placedGems)
         {
-            gemViews = new List<GemView>();
+            _gemViews = new List<GemView>();
 
-            if (gemPrefab == null)
+            if (_gemPrefab == null)
             {
                 Debug.LogError("Gem prefab is not assigned.");
                 return;
@@ -119,7 +119,7 @@ namespace Visual
 
             Vector3 gemLocalPosition = CalculateGemPosition(gemData);
             
-            GameObject gemObject = Instantiate(gemPrefab, transform);
+            GameObject gemObject = Instantiate(_gemPrefab, transform);
             gemObject.transform.localPosition = gemLocalPosition;
             gemObject.name = $"Gem_{gemData.Id}_{gemData.Definition.GemName}";
 
@@ -132,7 +132,7 @@ namespace Visual
             }
 
             gemView.Initialize(gemData);
-            gemViews.Add(gemView);
+            _gemViews.Add(gemView);
         }
 
         private Vector3 CalculateGemPosition(GemData gemData)
@@ -156,16 +156,16 @@ namespace Visual
 
         private Vector3 CalculateCellPosition(int x, int y)
         {
-            float xPos = x * (cellSize + cellSpacing);
-            float yPos = y * (cellSize + cellSpacing);
+            float xPos = x * (_cellSize + _cellSpacing);
+            float yPos = y * (_cellSize + _cellSpacing);
             
             return new Vector3(xPos, yPos, 0);
         }
 
         private void CenterGrid()
         {
-            float gridWidth = (gridData.Width - 1) * (cellSize + cellSpacing);
-            float gridHeight = (gridData.Height - 1) * (cellSize + cellSpacing);
+            float gridWidth = (_gridData.Width - 1) * (_cellSize + _cellSpacing);
+            float gridHeight = (_gridData.Height - 1) * (_cellSize + _cellSpacing);
             
             Vector3 offset = new Vector3(-gridWidth / 2f, -gridHeight / 2f, 0);
             transform.position += offset;

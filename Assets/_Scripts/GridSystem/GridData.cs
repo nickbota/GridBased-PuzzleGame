@@ -10,7 +10,7 @@ namespace GridSystem
         public int Width { get; private set; }
         public int Height { get; private set; }
 
-        private readonly CellData[,] cells;
+        private readonly CellData[,] _cells;
 
         public GridData(int width, int height)
         {
@@ -22,7 +22,7 @@ namespace GridSystem
 
             Width = width;
             Height = height;
-            cells = new CellData[width, height];
+            _cells = new CellData[width, height];
 
             InitializeCells();
         }
@@ -31,7 +31,7 @@ namespace GridSystem
             for (int x = 0; x < Width; x++)
             {
                 for (int y = 0; y < Height; y++)
-                    cells[x, y] = new CellData(x, y);
+                    _cells[x, y] = new CellData(x, y);
             }
         }
 
@@ -40,7 +40,7 @@ namespace GridSystem
             if (!IsValidCoordinate(x, y))
                 throw new ArgumentOutOfRangeException($"Cell coordinates ({x}, {y}) are out of bounds for grid size ({Width}, {Height})");
 
-            return cells[x, y];
+            return _cells[x, y];
         }
 
         public bool TryRevealCell(int x, int y)
@@ -48,7 +48,7 @@ namespace GridSystem
             if (!IsValidCoordinate(x, y))
                 return false;
 
-            var cell = cells[x, y];
+            var cell = _cells[x, y];
 
             if (cell.State == CellData.CellState.Revealed)
                 return false;
