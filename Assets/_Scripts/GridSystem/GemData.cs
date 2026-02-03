@@ -2,50 +2,53 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-// GemData class representing an instance of a gem placed on the grid
-// It tracks the occupied grid cells and notifies when the gem is fully revealed
-public class GemData
+namespace GridSystem
 {
-    public event Action<GemData> OnGemFound;
-
-    public int Id { get; private set; }
-    public GemDefinition Definition { get; private set; }
-    
-    private readonly List<CellData> occupiedCells;
-    public IReadOnlyList<CellData> OccupiedCells => occupiedCells;
-
-    public GemData(int id, GemDefinition definition)
+    // Represents an instance of a gem placed on the grid
+    // It tracks the occupied grid cells and notifies when the gem is fully revealed
+    public class GemData
     {
-        Id = id;
-        Definition = definition;
-        occupiedCells = new List<CellData>();
-    }
+        public event Action<GemData> OnGemFound;
 
-    public void AddCell(CellData cell)
-    {
-        if (!occupiedCells.Contains(cell))
+        public int Id { get; private set; }
+        public GemDefinition Definition { get; private set; }
+
+        private readonly List<CellData> occupiedCells;
+        public IReadOnlyList<CellData> OccupiedCells => occupiedCells;
+
+        public GemData(int id, GemDefinition definition)
         {
-            occupiedCells.Add(cell);
-            cell.OnStateChanged += OnCellStateChanged;
+            Id = id;
+            Definition = definition;
+            occupiedCells = new List<CellData>();
         }
-    }
 
-    public bool CheckCompletion()
-    {
-        return occupiedCells.All(cell => cell.State == CellData.CellState.Revealed);
-    }
+        public void AddCell(CellData cell)
+        {
+            if (!occupiedCells.Contains(cell))
+            {
+                occupiedCells.Add(cell);
+                cell.OnStateChanged += OnCellStateChanged;
+            }
+        }
 
-    private void OnCellStateChanged(CellData cell)
-    {
-        if (CheckCompletion())
-            OnGemFound?.Invoke(this);
-    }
+        public bool CheckCompletion()
+        {
+            return occupiedCells.All(cell => cell.State == CellData.CellState.Revealed);
+        }
 
-    public void Dispose()
-    {
-        foreach (var cell in occupiedCells)
-            cell.OnStateChanged -= OnCellStateChanged;
+        private void OnCellStateChanged(CellData cell)
+        {
+            if (CheckCompletion())
+                OnGemFound?.Invoke(this);
+        }
 
-        occupiedCells.Clear();
+        public void Dispose()
+        {
+            foreach (var cell in occupiedCells)
+                cell.OnStateChanged -= OnCellStateChanged;
+
+            occupiedCells.Clear();
+        }
     }
 }
