@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 957cbd4a06fbf8748ad9b6775dde76c7, type: 3}
+  m_Name: 3_3_Gold
+  m_EditorClassIdentifier: 
+  gemName: Gold
+  width: 3
+  height: 3
+  sprite: {fileID: 5673021278288933710, guid: 5674f6efc54b32c46b0168c58710e188, type: 3}
